@@ -1,4 +1,4 @@
-package horse.gargath.metricsexample;
+package horse.gargath.metricsexample.api;
 
 import java.util.ArrayList;
 import java.util.List;

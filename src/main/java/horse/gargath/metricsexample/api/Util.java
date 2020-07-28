@@ -1,4 +1,4 @@
-package horse.gargath.metricsexample;
+package horse.gargath.metricsexample.api;
 
 import javax.ws.rs.core.Response;
 
