@@ -9,6 +9,7 @@ public class JerseyConfig extends ResourceConfig {
     public JerseyConfig() {
         register(Endpoint.class);
         register(FooEndpoint.class);
+        register(ApiErrorMapper.class);
     }
 
 }

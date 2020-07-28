@@ -8,7 +8,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -33,7 +32,7 @@ public class FooEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Foo> listFoo() {
-        Either<WebApplicationException, List<Foo>> response = 
+        Either<ApiError, List<Foo>> response = 
             repo.listFoo().leftMap(Util::serverError);
         return Eithers.getOrThrow(response);
     }
@@ -42,7 +41,7 @@ public class FooEndpoint {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Foo getFoo(@PathParam("id") int id) {
-        Either<WebApplicationException, Foo> response =
+        Either<ApiError, Foo> response =
             repo.getFoo(id).leftMap(Util::notFoundOrServerError);
         return Eithers.getOrThrow(response);
     }
@@ -51,7 +50,7 @@ public class FooEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addFoo(Foo f) {
-        Either<WebApplicationException, Foo> response =
+        Either<ApiError, Foo> response =
             repo.addFoo(f).leftMap(Util::conflictOrServerError);
         f = Eithers.getOrThrow(response);
         return Response.status(201).entity(f).header("Location", "/foo/" + f.getId()).build();

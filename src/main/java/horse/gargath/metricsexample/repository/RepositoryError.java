@@ -28,4 +28,8 @@ public class RepositoryError {
         return this.errorType == t;
     }
 
+    public final String toString() {
+        return "RepositoryError (" + this.errorType + ") - " + this.getMessage();
+    }
+
 }

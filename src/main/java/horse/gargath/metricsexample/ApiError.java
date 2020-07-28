@@ -3,25 +3,33 @@ package horse.gargath.metricsexample;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ApiError {
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
+public class ApiError extends WebApplicationException {
+
+    private static final long serialVersionUID = 4508350470635048055L;
     private List<String> errors;
 
-    public ApiError() {
+    public ApiError(Response.Status status) {
+        super(status);
         this.errors = new ArrayList<String>();
     }
 
-    public ApiError(String error) {
-        this();
+    public ApiError(Response.Status status, String error) {
+        this(status);
         this.addError(error);
     }
 
-    public void addError(String error) {
+    public final void addError(String error) {
         this.errors.add(error);
     }
 
-    public List<String> getErrors() {
-        return this.errors;
+    public final ErrorList getErrors() {
+        return new ErrorList(this.errors);
     }
-    
+
+    public final String toString() {
+        return "ApiError (" + this.getResponse().getStatus() + ") - " + this.errors;
+    }
 }

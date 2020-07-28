@@ -1,12 +1,11 @@
 package horse.gargath.metricsexample.repository;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.statement.UnableToExecuteStatementException;
 import org.springframework.stereotype.Component;
-
-import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
 
 import io.atlassian.fugue.Either;
 
@@ -48,7 +47,7 @@ public class JdbiFooRepository implements FooRepository {
             return Either.right(foo);
         }
         catch (IllegalStateException e) {
-            RepositoryError re = new RepositoryError(RepositoryError.Type.NOTFOUND, e.getMessage());
+            RepositoryError re = new RepositoryError(RepositoryError.Type.NOTFOUND, "Foo with id " + id + " does not exist");
             return Either.left(re);
         }
         catch (Exception e) {
@@ -67,8 +66,8 @@ public class JdbiFooRepository implements FooRepository {
             });    
         }
         catch (UnableToExecuteStatementException e) {
-            return e.getCause() instanceof JdbcSQLIntegrityConstraintViolationException
-                ?  Either.left(new RepositoryError(RepositoryError.Type.CONFLICT, e.getCause().getMessage()))
+            return e.getCause() instanceof SQLIntegrityConstraintViolationException
+                ?  Either.left(new RepositoryError(RepositoryError.Type.CONFLICT, "Foo with id " + foo.getId() + " already exists"))
                 :  Either.left(new RepositoryError(RepositoryError.Type.STORAGEERROR, e.getCause().getMessage()));
         }
         return Either.right(foo);
