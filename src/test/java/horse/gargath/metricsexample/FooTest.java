@@ -1,6 +1,6 @@
 package horse.gargath.metricsexample;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 
 import static org.hamcrest.CoreMatchers.*;
 
@@ -8,7 +8,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.Test;
 import org.junit.BeforeClass;
-import com.jayway.restassured.RestAssured;
+import io.restassured.RestAssured;
 
 
 @SpringBootTest
@@ -38,5 +38,43 @@ public class FooTest {
             statusCode(200).
         when().
             get("/foo/0");
+    }
+
+    @Test
+    public void shoudReturnCorrectHeaders() {
+        given().
+        expect().
+            header("Content-Type", equalTo("application/json")).
+            statusCode(200).
+        when().
+            get("/foo/0");
+    }
+
+    @Test
+    public void shouldReturnNotFound() {
+        given().
+        expect().
+            statusCode(404).
+        when().
+            get("/foo/1");
+    }
+
+    @Test
+    public void shouldAddFoo() {
+        given().
+            contentType("application/json").
+            body("{ \"id\": 99, \"name\": \"TestFoo\" }").
+            post("/foo").
+        then().
+            statusCode(201).
+            header("Content-Type", equalTo("application/json")).
+            body("id", equalTo(99));
+
+        given().
+        expect().
+            statusCode(200).
+            body("id", equalTo(99)).
+        when().
+            get("/foo/99");
     }
 }
