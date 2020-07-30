@@ -34,7 +34,7 @@ public class FooTest {
     public void shoudReturnCorrectFoo() {
         given().
         expect().
-            body("id", equalTo(0)).
+            body("id", equalTo("0")).
             statusCode(200).
         when().
             get("/foo/0");
@@ -61,20 +61,141 @@ public class FooTest {
 
     @Test
     public void shouldAddFoo() {
+        String newId = given().
+            contentType("application/json").
+            body("{ \"name\": \"TestFoo\" }").
+            post("/foo").
+        then().
+            statusCode(201).
+            header("Content-Type", equalTo("application/json")).
+            body("name", equalTo("TestFoo")).
+        extract().
+            path("id");
+        
+        given().
+        expect().
+            statusCode(200).
+            body("id", equalTo(newId)).
+        when().
+            get("/foo/" + newId);
+    }
+
+    @Test
+    public void shouldRejectIdInPost() {
         given().
             contentType("application/json").
             body("{ \"id\": 99, \"name\": \"TestFoo\" }").
             post("/foo").
         then().
+            statusCode(400).
+            header("Content-Type", equalTo("application/json")).
+            body("errors", hasItem(containsString("must be empty")));
+        }
+
+    @Test
+    public void shouldUpdateFoo() {
+        String newId = given().
+            contentType("application/json").
+            body("{ \"name\": \"TestFoo\" }").
+            post("/foo").
+        then().
             statusCode(201).
             header("Content-Type", equalTo("application/json")).
-            body("id", equalTo(99));
+            body("name", equalTo("TestFoo")).
+        extract().
+            path("id");
+        
+        given().
+        expect().
+            statusCode(200).
+            body("id", equalTo(newId)).
+        when().
+            get("/foo/" + newId);
+
+        given().
+            contentType("application/json").
+            body("{ \"name\": \"TestFooUpdated\" }").
+            put("/foo/" + newId).
+        then().
+            statusCode(200).
+            header("Content-Type", equalTo("application/json")).
+            body("name", equalTo("TestFooUpdated"));
 
         given().
         expect().
             statusCode(200).
-            body("id", equalTo(99)).
+            header("Content-Type", equalTo("application/json")).
+            body("name", equalTo("TestFooUpdated")).
         when().
-            get("/foo/99");
+            get("/foo/" + newId);
+    }
+
+    @Test
+    public void shouldUpdateFooWithId() {
+        String newId = given().
+            contentType("application/json").
+            body("{ \"name\": \"TestFoo\" }").
+            post("/foo").
+        then().
+            statusCode(201).
+            header("Content-Type", equalTo("application/json")).
+            body("name", equalTo("TestFoo")).
+        extract().
+            path("id");
+        
+        given().
+        expect().
+            statusCode(200).
+            body("id", equalTo(newId)).
+        when().
+            get("/foo/" + newId);
+
+        given().
+            contentType("application/json").
+            body("{ \"id\": \""+ newId +"\", \"name\": \"TestFooUpdated\" }").
+            put("/foo/" + newId).
+        then().
+            statusCode(200).
+            header("Content-Type", equalTo("application/json")).
+            body("name", equalTo("TestFooUpdated"));
+
+        given().
+        expect().
+            statusCode(200).
+            header("Content-Type", equalTo("application/json")).
+            body("name", equalTo("TestFooUpdated")).
+        when().
+            get("/foo/" + newId);
+    }
+
+    @Test
+    public void shouldRejectUpdateWithConflictingIds() {
+        String newId = given().
+            contentType("application/json").
+            body("{ \"name\": \"TestFoo\" }").
+            post("/foo").
+        then().
+            statusCode(201).
+            header("Content-Type", equalTo("application/json")).
+            body("name", equalTo("TestFoo")).
+        extract().
+            path("id");
+        
+        given().
+        expect().
+            statusCode(200).
+            body("id", equalTo(newId)).
+        when().
+            get("/foo/" + newId);
+
+        given().
+            contentType("application/json").
+            body("{ \"id\": \"bumble-fudge\", \"name\": \"TestFooUpdatedWithConflict\" }").
+            put("/foo/" + newId).
+        then().
+            statusCode(400).
+            header("Content-Type", equalTo("application/json")).
+            body("errors", hasItem(containsString("must be empty or match")));
+
     }
 }
