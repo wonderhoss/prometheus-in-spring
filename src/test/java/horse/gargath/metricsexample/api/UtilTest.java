@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import javax.ws.rs.core.Response;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 import horse.gargath.metricsexample.repository.Foo;
 import horse.gargath.metricsexample.repository.RepositoryError;
