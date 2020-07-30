@@ -4,7 +4,7 @@ import static io.restassured.RestAssured.given;
 
 import static org.hamcrest.CoreMatchers.*;
 
-import org.springframework.boot.SpringApplication;
+//import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testng.annotations.Test;
 import org.testng.annotations.BeforeClass;
@@ -45,7 +45,7 @@ public class ITFoo {
         given().
         expect().
             header("Content-Type", equalTo("application/json")).
-            statusCode(201).
+            statusCode(200).
         when().
             get("/api/foo/0");
     }
