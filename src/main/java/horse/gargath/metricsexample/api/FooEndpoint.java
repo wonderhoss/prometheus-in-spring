@@ -20,10 +20,12 @@ import horse.gargath.metricsexample.repository.Foo;
 import horse.gargath.metricsexample.repository.FooRepository;
 import io.atlassian.fugue.Either;
 import io.atlassian.fugue.Eithers;
+import io.micrometer.core.annotation.Timed;
 
 
 @Component
 @Path("/foo")
+@Timed(value="http_foo", histogram=true)
 public class FooEndpoint {
 
     private final Logger logger = LoggerFactory.getLogger(FooEndpoint.class);
@@ -56,6 +58,7 @@ public class FooEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response addFoo(Foo f) {
         if (f.getId()!= null) {
+            logger.debug("Rejecting because id not empty");
             throw new ApiError(Response.Status.BAD_REQUEST, "'id' field must be empty");
         }
         Either<ApiError, Foo> response =
@@ -69,9 +72,8 @@ public class FooEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateFoo(@PathParam("id") String id, Foo f) {
-        logger.info("Request: " + id + " - " + f.toString());
         if (f.getId() != null && !f.getId().equals(id)) {
-            logger.info("Rejecting because id not match or empty");
+            logger.debug("Rejecting because id not match or empty");
             throw new ApiError(Response.Status.BAD_REQUEST, "'id' field must be empty or match entity id "+ id);
         }
         f.setId(id);

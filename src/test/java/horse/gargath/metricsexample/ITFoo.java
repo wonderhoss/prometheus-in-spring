@@ -4,15 +4,15 @@ import static io.restassured.RestAssured.given;
 
 import static org.hamcrest.CoreMatchers.*;
 
-import org.springframework.boot.SpringApplication;
+//import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.junit.Test;
-import org.junit.BeforeClass;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeClass;
 import io.restassured.RestAssured;
 
 
 @SpringBootTest
-public class FooTest {
+public class ITFoo {
     
     private static final int TEST_PORT = 8080;
     private static final String TEST_URL = "http://localhost";
@@ -27,7 +27,7 @@ public class FooTest {
         RestAssured.port = TEST_PORT;
         RestAssured.baseURI = TEST_URL;
 
-        SpringApplication.run(App.class);
+//        SpringApplication.run(App.class);
     }
 
     @Test
@@ -37,7 +37,7 @@ public class FooTest {
             body("id", equalTo("0")).
             statusCode(200).
         when().
-            get("/foo/0");
+            get("/api/foo/0");
     }
 
     @Test
@@ -47,7 +47,7 @@ public class FooTest {
             header("Content-Type", equalTo("application/json")).
             statusCode(200).
         when().
-            get("/foo/0");
+            get("/api/foo/0");
     }
 
     @Test
@@ -56,7 +56,7 @@ public class FooTest {
         expect().
             statusCode(404).
         when().
-            get("/foo/1");
+            get("/api/foo/1");
     }
 
     @Test
@@ -64,7 +64,7 @@ public class FooTest {
         String newId = given().
             contentType("application/json").
             body("{ \"name\": \"TestFoo\" }").
-            post("/foo").
+            post("/api/foo").
         then().
             statusCode(201).
             header("Content-Type", equalTo("application/json")).
@@ -77,7 +77,7 @@ public class FooTest {
             statusCode(200).
             body("id", equalTo(newId)).
         when().
-            get("/foo/" + newId);
+            get("/api/foo/" + newId);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class FooTest {
         given().
             contentType("application/json").
             body("{ \"id\": 99, \"name\": \"TestFoo\" }").
-            post("/foo").
+            post("/api/foo").
         then().
             statusCode(400).
             header("Content-Type", equalTo("application/json")).
@@ -97,7 +97,7 @@ public class FooTest {
         String newId = given().
             contentType("application/json").
             body("{ \"name\": \"TestFoo\" }").
-            post("/foo").
+            post("/api/foo").
         then().
             statusCode(201).
             header("Content-Type", equalTo("application/json")).
@@ -110,12 +110,12 @@ public class FooTest {
             statusCode(200).
             body("id", equalTo(newId)).
         when().
-            get("/foo/" + newId);
+            get("/api/foo/" + newId);
 
         given().
             contentType("application/json").
             body("{ \"name\": \"TestFooUpdated\" }").
-            put("/foo/" + newId).
+            put("/api/foo/" + newId).
         then().
             statusCode(200).
             header("Content-Type", equalTo("application/json")).
@@ -127,7 +127,7 @@ public class FooTest {
             header("Content-Type", equalTo("application/json")).
             body("name", equalTo("TestFooUpdated")).
         when().
-            get("/foo/" + newId);
+            get("/api/foo/" + newId);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class FooTest {
         String newId = given().
             contentType("application/json").
             body("{ \"name\": \"TestFoo\" }").
-            post("/foo").
+            post("/api/foo").
         then().
             statusCode(201).
             header("Content-Type", equalTo("application/json")).
@@ -148,12 +148,12 @@ public class FooTest {
             statusCode(200).
             body("id", equalTo(newId)).
         when().
-            get("/foo/" + newId);
+            get("/api/foo/" + newId);
 
         given().
             contentType("application/json").
             body("{ \"id\": \""+ newId +"\", \"name\": \"TestFooUpdated\" }").
-            put("/foo/" + newId).
+            put("/api/foo/" + newId).
         then().
             statusCode(200).
             header("Content-Type", equalTo("application/json")).
@@ -165,7 +165,7 @@ public class FooTest {
             header("Content-Type", equalTo("application/json")).
             body("name", equalTo("TestFooUpdated")).
         when().
-            get("/foo/" + newId);
+            get("/api/foo/" + newId);
     }
 
     @Test
@@ -173,7 +173,7 @@ public class FooTest {
         String newId = given().
             contentType("application/json").
             body("{ \"name\": \"TestFoo\" }").
-            post("/foo").
+            post("/api/foo").
         then().
             statusCode(201).
             header("Content-Type", equalTo("application/json")).
@@ -186,12 +186,12 @@ public class FooTest {
             statusCode(200).
             body("id", equalTo(newId)).
         when().
-            get("/foo/" + newId);
+            get("/api/foo/" + newId);
 
         given().
             contentType("application/json").
             body("{ \"id\": \"bumble-fudge\", \"name\": \"TestFooUpdatedWithConflict\" }").
-            put("/foo/" + newId).
+            put("/api/foo/" + newId).
         then().
             statusCode(400).
             header("Content-Type", equalTo("application/json")).
