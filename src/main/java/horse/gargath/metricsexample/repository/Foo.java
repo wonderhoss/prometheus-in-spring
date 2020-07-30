@@ -1,21 +1,21 @@
 package horse.gargath.metricsexample.repository;
 
 public class Foo {
-    private int id;
+    private String id;
     private String name;
 
     public Foo() {}
 
-    public Foo (int id, String name) {
+    public Foo (String id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public int getId() {
+    public String getId() {
         return this.id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -28,6 +28,9 @@ public class Foo {
     }
 
     public String toString() {
-        return "{ \"id\": " + this.id + ", \"name\": \"" + this.name + "\" }";
+        if (this.id != null) {
+            return "{ \"id\": " + this.getId() + ", \"name\": \"" + this.name + "\" }";
+        }
+        return "{ \"name\": \"" + this.name + "\" }";
     }
 }
