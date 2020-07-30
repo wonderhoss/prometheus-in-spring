@@ -1,8 +1,8 @@
 name: Java Integration tests
 
 on:
-    pull_requests:
-        types: [synchronize]
+    pull_request:
+        types: [opened, reopened, synchronize]
         paths-ignore:
             - README.md
 
